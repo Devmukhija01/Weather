@@ -1,38 +1,304 @@
+/* App Container */
 .App {
   text-align: center;
-}
-
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
-}
-
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
-}
-
-.App-header {
-  background-color: #282c34;
+  padding: 20px;
+  font-family: 'Poppins', sans-serif;
+  background: linear-gradient(to bottom, #e0e0e0, #f5f5f5);
   min-height: 100vh;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
+  color: #333;
+  transition: all 0.3s ease;
 }
 
-.App-link {
-  color: #61dafb;
+/* Form Styling */
+form {
+  margin: 20px 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  max-width: 400px; /* Restrict form width */
+  gap: 20px; /* More space between input and buttons */
 }
 
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
+/* Input Field */
+input {
+  padding: 12px 15px;
+  margin-bottom: 10px; /* Adjusted margin */
+  border-radius: 25px;
+  border: 1px solid #fff; /* Blue border */
+  outline: none;
+  width: 100%;
+  max-width: 350px;
+  font-size: 1rem;
+  background-color: #ffffff; /* White background for input */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+}
+
+input:focus {
+  border-color: #0056b3; /* Darker blue border on focus */
+  box-shadow: 0 0 8px rgba(0, 0, 0, 0.2); /* Enhanced shadow on focus */
+}
+
+/* Button Styling */
+button {
+  padding: 12px 20px;
+  margin: 10px 0;
+  border-radius: 25px;
+  border: none;
+  background-color: #007bff; /* Blue button */
+  color: #000; /* White text */
+  font-size: 1.1rem;
+  width: 100%;
+  max-width: 350px;
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.3s ease;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Soft shadow */
+}
+
+button:hover {
+  background-color: #007bff; /* Darker blue on hover */
+  color: #fff;
+  transform: scale(1.05); /* Slightly enlarge button on hover */
+}
+
+/* Weather Info Styling */
+.weather-info {
+  background-color: rgba(255, 255, 255, 0.9); /* Slightly opaque white */
+  padding: 20px;
+  border-radius: 15px;
+  margin-top: 20px;
+  box-shadow: 0px 6px 15px rgba(0, 0, 0, 0.2); /* Softer shadow */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 90%;
+  max-width: 500px;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.weather-info:hover {
+  transform: translateY(-5px); /* Lift up the card on hover */
+  box-shadow: 0px 10px 20px rgba(0, 0, 0, 0.3); /* Deeper shadow on hover */
+}
+
+.weather-info h2 {
+  font-size: 2rem;
+  margin-bottom: 10px;
+}
+
+.weather-icon {
+  font-size: 4rem;
+  margin: 15px 0;
+  animation: pulse 2s infinite; /* Apply pulsating effect */
+}
+
+/* Weather Condition Styles */
+.clear-sky {
+  background-color: #ffffff; /* Light yellow for clear skies */
+}
+
+.scattered-clouds {
+  background-color: #ffffff; /* Light gray background */
+}
+
+.overcast-clouds {
+  background-color: #ffffff; /* Medium gray background */
+}
+
+/* Forecast Section */
+.forecast {
+  margin-top: 30px;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 15px;
+  width: 100%;
+}
+
+.forecast h3 {
+  font-size: 1.6rem;
+  margin-bottom: 20px;
+  grid-column: 1 / -1;
+  text-align: center;
+}
+
+.forecast-day {
+  padding: 20px;
+  border-radius: 15px;
+  box-shadow: 0px 6px 15px rgba(0, 0, 0, 0.2); /* Softer shadow */
+  text-align: center;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.forecast-day:hover {
+  transform: translateY(-5px); /* Lift up card on hover */
+  box-shadow: 0px 10px 20px rgba(0, 0, 0, 0.3); /* Deeper shadow on hover */
+}
+
+.forecast-day p {
+  margin: 10px 0;
+  font-size: 1rem;
+}
+
+.forecast-day .weather-icon {
+  font-size: 2.5rem;
+  margin-bottom: 10px;
+}
+
+/* Error Message */
+.error {
+  color: #dc3545; /* Red color for error messages */
+  font-size: 1.2rem;
+  margin-top: 20px;
+}
+
+/* Responsive Adjustments */
+@media (max-width: 600px) {
+  input, button {
+    max-width: 90%; /* Better alignment on small screens */
   }
-  to {
-    transform: rotate(360deg);
+
+  .weather-info {
+    max-width: 90%;
   }
 }
+
+/* Keyframes for Pulsating Effect */
+@keyframes pulse {
+  0% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.7;
+  }
+  100% {
+    opacity: 0.3;
+  }
+}
+.dark-mode {
+  background: linear-gradient(to bottom, #333, #555); /* Dark background */
+  color: #ffffff; /* Light text */
+}
+
+/* Theme Toggle Switch */
+.theme-toggle {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+}
+
+.theme-toggle button {
+  padding: 10px 15px;
+  border-radius: 25px;
+  border: none;
+  background-color: #007bff;
+  color: #fff;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.theme-toggle button:hover {
+  background-color: #0056b3;
+}
+
+input, button {
+  background-color: #fff;
+}
+
+.dark-mode input, .dark-mode button {
+  background-color: #444;
+  color: #fff;
+}
+
+.dark-mode .weather-info {
+  background-color: rgba(0, 0, 0, 0.9);
+}
+
+.dark-mode .forecast-day {
+  background-color: rgba(0, 0, 0, 0.7);
+}
+/* Responsive Adjustments */
+@media (max-width: 600px) {
+  input, button {
+    max-width: 90%; /* Better alignment on small screens */
+  }
+
+  .weather-info {
+    max-width: 90%;
+  }
+
+  /* Dark mode toggle button adjustments */
+  .theme-toggle {
+    top: 10px; /* Maintain space from the top */
+    left: 10px; /* Move the button to the left side */
+    right: auto; /* Remove right alignment */
+  }
+
+  /* Adjust weather app heading margin */
+  h1 {
+    margin-top: 40px; /* Add some space below the dark mode button */
+  }
+
+  /* Adjust layout for small screens */
+  .App {
+    padding: 10px;
+  }
+}
+
+
+#checkboxInput {
+  display: none;
+}
+
+.toggleSwitch {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  width: 50px;
+  height: 30px;
+  background-color: rgb(82, 82, 82);
+  border-radius: 20px;
+  cursor: pointer;
+  transition-duration: .2s;
+}
+
+.toggleSwitch::after {
+  content: "";
+  position: absolute;
+  height: 10px;
+  width: 10px;
+  left: 5px;
+  background-color: transparent;
+  border-radius: 50%;
+  transition-duration: .2s;
+  box-shadow: 5px 2px 7px rgba(8, 8, 8, 0.26);
+  border: 5px solid white;
+}
+
+/* Switch background and movement when toggled */
+#checkboxInput:checked + .toggleSwitch::after {
+  transform: translateX(100%);
+  transition-duration: .2s;
+  background-color: white;
+}
+
+#checkboxInput:checked + .toggleSwitch {
+  background-color: rgb(234, 233, 239);
+  transition-duration: .2s;
+}
+
+/* Responsive Adjustments */
+@media (max-width: 600px) {
+  .theme-toggle {
+    top: 10px;
+    left: 10px;
+    right: auto;
+  }
+}
+
