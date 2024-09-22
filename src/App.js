@@ -25,14 +25,17 @@ function App() {
       setError('');
       fetchForecast(response.data.coord.lat, response.data.coord.lon);
       speakWeather(response.data);
-      setShowMenu(true);
+      // Remove the line below to prevent automatic opening of the hamburger menu
+      // setShowMenu(true);
     } catch (err) {
       setError('City not found. Please try again.');
       setWeather(null);
       setForecast([]);
+      // Keep the menu closed in case of an error
       setShowMenu(false);
     }
   };
+  
 
   const fetchForecast = async (lat, lon) => {
     try {
