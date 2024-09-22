@@ -1,35 +1,42 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import './App.css';
-import { WiDaySunny, WiCloudy, WiCloud } from 'react-icons/wi'; 
+import { WiDaySunny, WiCloudy, WiCloud } from 'react-icons/wi';
+import { FaBars,FaTimes } from 'react-icons/fa';
 
 function App() {
   const [city, setCity] = useState('');
   const [weather, setWeather] = useState(null);
   const [forecast, setForecast] = useState([]);
   const [unit, setUnit] = useState('metric');
-  const [error, setError] = useState('');
+  const [error, setError] = useState(''); 
   const [currentTime, setCurrentTime] = useState(new Date());
-  const [darkMode, setDarkMode] = useState(false); 
+  const [darkMode, setDarkMode] = useState(false);
+  const [language, setLanguage] = useState('en');
+  const [favorites, setFavorites] = useState([]);
+  const [showMenu, setShowMenu] = useState(false);
 
   const apiKey = 'c0241ef9af38020225ed6125f2e63523'; // Replace with your OpenWeather API key
 
   const fetchWeather = async (city) => {
     try {
-      const response = await axios.get(`https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${apiKey}&units=${unit}`);
+      const response = await axios.get(`https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${apiKey}&units=${unit}&lang=${language}`);
       setWeather(response.data);
       setError('');
       fetchForecast(response.data.coord.lat, response.data.coord.lon);
+      speakWeather(response.data);
+      setShowMenu(true);
     } catch (err) {
       setError('City not found. Please try again.');
       setWeather(null);
       setForecast([]);
+      setShowMenu(false);
     }
   };
 
   const fetchForecast = async (lat, lon) => {
     try {
-      const response = await axios.get(`https://api.openweathermap.org/data/2.5/forecast?lat=${lat}&lon=${lon}&appid=${apiKey}&units=${unit}`);
+      const response = await axios.get(`https://api.openweathermap.org/data/2.5/forecast?lat=${lat}&lon=${lon}&appid=${apiKey}&units=${unit}&lang=${language}`);
       const dailyForecast = response.data.list.filter((item) => item.dt_txt.endsWith("12:00:00"));
       setForecast(dailyForecast);
     } catch (err) {
@@ -38,11 +45,21 @@ function App() {
     }
   };
 
+  const speakWeather = (data) => {
+    const speech = new SpeechSynthesisUtterance();
+    speech.text = `The weather in ${data.name} is ${data.weather[0].description} with a temperature of ${data.main.temp} degrees.`;
+    window.speechSynthesis.speak(speech);
+  };
+
+  const handleButtonClick = () => {
+    setShowMenu(false); // Close menu on button click
+  };
+
   const handleSubmit = (e) => {
     e.preventDefault();
     fetchWeather(city);
   };
-
+  
   const getCurrentLocationWeather = async () => {
     if (navigator.geolocation) {
       try {
@@ -61,10 +78,11 @@ function App() {
 
   const fetchWeatherByCoords = async (lat, lon) => {
     try {
-      const response = await axios.get(`https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=${apiKey}&units=${unit}`);
+      const response = await axios.get(`https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=${apiKey}&units=${unit}&lang=${language}`);
       setWeather(response.data);
       setError('');
       fetchForecast(lat, lon);
+      speakWeather(response.data);
     } catch (err) {
       setError('Unable to fetch weather for your location. Please try again later.');
       setWeather(null);
@@ -96,6 +114,24 @@ function App() {
 
   const handleToggle = () => {
     setDarkMode(!darkMode);
+  };
+
+  const handleLanguageChange = (e) => {
+    setLanguage(e.target.value);
+    if (weather) {
+      fetchWeather(weather.name);
+    }
+  };
+
+  const addFavorite = () => {
+    if (city && !favorites.includes(city)) {
+      setFavorites([...favorites, city]);
+      setCity('');
+    }
+  };
+
+  const removeFavorite = (city) => {
+    setFavorites(favorites.filter(fav => fav !== city));
   };
 
   useEffect(() => {
@@ -164,10 +200,6 @@ function App() {
         <button type="button" onClick={getCurrentLocationWeather}>Use Current Location</button>
       </form>
 
-      <button onClick={toggleUnit}>
-        Switch to {unit === 'metric' ? 'Fahrenheit' : 'Celsius'}
-      </button>
-
       {error && <p className="error">{error}</p>}
       {weather && (
         <div className={`weather-info ${getWeatherClass(weather.weather[0].main)}`}>
@@ -195,6 +227,47 @@ function App() {
           ))}
         </div>
       )}
+      {favorites.length > 0 && (
+        <div className="favorites">
+          <h3>Favorite Locations</h3>
+          {favorites.map((fav, index) => (
+            <div key={index}>
+              <span>{fav}</span>
+              <button onClick={() => removeFavorite(fav)}>Remove</button>
+            </div>
+          ))}
+        </div>
+      )}
+
+      {/* Hamburger menu */}
+      {/* Hamburger menu */}
+{weather && (
+  <div className="hamburger-menu">
+    <FaBars className="hamburger-icon" onClick={() => setShowMenu(!showMenu)} />
+    {showMenu && (
+      <div className="menu-content">
+        <FaTimes className="close-icon" onClick={handleButtonClick} />
+        <h3>Features</h3>
+        <button onClick={() => { addFavorite(); handleButtonClick(); }}>
+          Add to Favorites
+        </button>
+        <button onClick={() => { toggleUnit(); handleButtonClick(); }}>
+          Switch to {unit === 'metric' ? 'Fahrenheit' : 'Celsius'}
+        </button>
+        <select
+          id="language-select"
+          value={language}
+          onChange={(e) => { handleLanguageChange(e); handleButtonClick(); }}
+        >
+          <option disabled>--Select Language--</option>
+          <option value="en">English</option>
+          <option value="es">Spanish</option>
+          <option value="fr">French</option>
+        </select>
+      </div>
+    )}
+  </div>
+)}
     </div>
   );
 }
